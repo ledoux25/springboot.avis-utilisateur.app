@@ -3,6 +3,8 @@ package com.example.avis_utilisateur.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -15,4 +17,9 @@ public class Avis {
     private int id;
     private String message;
     private String type;
+    @Column(name = "deleted_at")
+    private Date deletedAt;
+    @ManyToOne(cascade = {CascadeType.DETACH})
+    @JoinColumn(name = "utilisateur_id")
+    private Utilisateur utilisateur;
 }

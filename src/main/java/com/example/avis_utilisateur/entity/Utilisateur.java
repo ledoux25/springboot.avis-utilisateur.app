@@ -29,7 +29,7 @@ public class Utilisateur implements UserDetails {
     private String nom;
     private String email;
     private boolean actif=false;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.ALL, CascadeType.MERGE})
     private Role role;
 
 

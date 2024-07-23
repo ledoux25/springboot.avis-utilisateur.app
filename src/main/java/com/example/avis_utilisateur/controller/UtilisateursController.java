@@ -2,17 +2,15 @@ package com.example.avis_utilisateur.controller;
 
 import com.example.avis_utilisateur.dto.AuthentificationDTO;
 import com.example.avis_utilisateur.entity.Utilisateur;
-import com.example.avis_utilisateur.entity.Validation;
-import com.example.avis_utilisateur.security.JwtService;
+import com.example.avis_utilisateur.enums.TypeDeRole;
+import com.example.avis_utilisateur.service.JwtService;
 import com.example.avis_utilisateur.service.UtilisateurService;
-import com.example.avis_utilisateur.service.ValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +33,8 @@ public class UtilisateursController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "inscription", consumes = APPLICATION_JSON_VALUE)
-    public void inscription(@RequestBody Utilisateur user){
-        this.utilisateurService.inscription(user);
+    public void inscription(@RequestBody Utilisateur user, @RequestParam String role){
+        this.utilisateurService.inscription(user,role);
     }
 
     @PostMapping(path = "activation", consumes = APPLICATION_JSON_VALUE)

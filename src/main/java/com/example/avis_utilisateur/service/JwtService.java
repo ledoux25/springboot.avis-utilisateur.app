@@ -1,21 +1,23 @@
-package com.example.avis_utilisateur.security;
+package com.example.avis_utilisateur.service;
 
 import com.example.avis_utilisateur.entity.Jwt;
 import com.example.avis_utilisateur.entity.Utilisateur;
 import com.example.avis_utilisateur.repository.JwtRepository;
-import com.example.avis_utilisateur.service.UtilisateurService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
@@ -66,6 +68,7 @@ public class JwtService {
         Map<String, Object> claims = Map.of(
                 "nom", utilisateur.getNom(),
                 "email", utilisateur.getEmail(),
+                "role",utilisateur.getRole().getLibelle(),
                 Claims.EXPIRATION, new Date(expirationTime),
                 Claims.SUBJECT,utilisateur.getEmail()
         );
@@ -90,6 +93,13 @@ public class JwtService {
     public String  lireUsername(String token) {
         return this.getClaim(token, Claims::getSubject);
     }
+
+
+
+    public Utilisateur  lireUser(String token) {
+        return utilisateurService.loadUserByUsername(this.getClaim(token, Claims::getSubject));
+    }
+
 
     public boolean isTokenExpired(String token) {
         Date expirationDate = this.getClaim(token,Claims::getExpiration);
@@ -122,7 +132,7 @@ public class JwtService {
         this.jwtRepository.save(jwt);
     }
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 0 */1 * * *")
     public void removeUselessJwt(){
         log.info("Suprssion token {}", Instant.now());
         this.jwtRepository.deleteAllByExpireAndDesactive(true,true);

@@ -2,6 +2,7 @@ package com.example.avis_utilisateur.security;
 
 import com.example.avis_utilisateur.entity.Jwt;
 import com.example.avis_utilisateur.entity.Utilisateur;
+import com.example.avis_utilisateur.service.JwtService;
 import com.example.avis_utilisateur.service.UtilisateurService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -52,4 +52,6 @@ public class JwtFilter extends OncePerRequestFilter{
 
        filterChain.doFilter(request, response);
     }
+
+
 }

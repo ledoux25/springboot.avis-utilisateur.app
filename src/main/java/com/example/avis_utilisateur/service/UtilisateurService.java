@@ -5,11 +5,8 @@ import com.example.avis_utilisateur.entity.Utilisateur;
 import com.example.avis_utilisateur.entity.Validation;
 import com.example.avis_utilisateur.enums.TypeDeRole;
 import com.example.avis_utilisateur.repository.UtilisateurRepository;
-import com.example.avis_utilisateur.security.JwtService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +16,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class UtilisateurService implements UserDetailsService {
@@ -29,7 +27,9 @@ public class UtilisateurService implements UserDetailsService {
 
 
 
-    public void inscription(Utilisateur user){
+    public void inscription(Utilisateur user, String role){
+        log.info("ya{}",role);
+
         if (!user.getEmail().contains("@")){
             throw new RuntimeException("Votre adresse mail est incorect");
         }
@@ -38,7 +38,16 @@ public class UtilisateurService implements UserDetailsService {
         }
 
         Role roleUtilisate = new Role();
-        roleUtilisate.setLibelle(TypeDeRole.UTILISATEUR);
+
+       if (role.equals("administrateur")){
+           roleUtilisate.setLibelle(TypeDeRole.ADMINISTRATEUR);
+
+       }else if (role.equals("utilisateur")){
+           roleUtilisate.setLibelle(TypeDeRole.UTILISATEUR);
+
+
+       }
+
         user.setRole(roleUtilisate);
 
         Optional<Utilisateur> optionalUtilisateur = this.utilisateurRepository.findByEmail(user.getEmail());
@@ -54,6 +63,7 @@ public class UtilisateurService implements UserDetailsService {
 
     }
 
+
     public void activation(Map<String, String> activation) {
         Validation validation = this.validationService.lireEnFonctionDuCode(activation.get("code"));
 
@@ -65,6 +75,7 @@ public class UtilisateurService implements UserDetailsService {
         utilisateur.setActif(true);
         this.utilisateurRepository.save(utilisateur);
     }
+
 
     @Override
     public Utilisateur loadUserByUsername(String username) throws UsernameNotFoundException {
